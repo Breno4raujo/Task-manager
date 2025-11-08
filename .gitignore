@@ -1,0 +1,16 @@
+
+node_modules/
+.env
+logs/
+*.log
+*.tmp
+dist/
+build/
+.cache/
+tmp/
+*.sqlite
+*.db
+*.db-journal
+
+
+
