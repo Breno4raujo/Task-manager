@@ -27,12 +27,14 @@ src/
 ├─ migrations/ # Migrations (opcional com sequelize-cli)
 ├─ app.js # Configuração principal do Express
 └─ server.js # Inicialização do servidor
- 
+
+---
+
 ## ⚙️ Configuração do Ambiente
 
-### 1️⃣ Clone o repositório
+1️⃣ Clone o repositório
 
-git clone https://github.com/seuusuario/api-tarefas.git
+git clone https://github.com/Breno4raujo/API-Tarefas.git
 cd api-tarefas
 
 2️⃣ Instale as dependências
@@ -43,19 +45,25 @@ npm install
 Crie um arquivo .env na raiz do projeto com o seguinte conteúdo:
 
 NODE_ENV=development
+
 DATABASE_URL=sqlite:./database.sqlite
+
 PORT=3000
 
 4️⃣ Inicie o servidor
 
 npm run dev
-# ou
+ou
 npm start
 
-A API estará disponível em:
+---
+
+## A API estará disponível em:
 👉 http://localhost:3000
 
-🧩 Endpoints da API
+---
+
+## 🧩 Endpoints da API
 Método	Endpoint	Descrição
 POST	/tarefas	Criar uma nova tarefa
 GET	/tarefas	Listar todas as tarefas
@@ -64,7 +72,9 @@ PUT	/tarefas/:id	Atualizar todos os dados de uma tarefa
 PATCH	/tarefas/:id/status	Atualizar apenas o status da tarefa
 DELETE	/tarefas/:id	Remover uma tarefa existente
 
-✅ Exemplos de Uso (JSON)
+---
+
+## ✅ Exemplos de Uso (JSON)
 Criar uma Tarefa — POST /tarefas
 
 {
@@ -87,15 +97,21 @@ Atualizar Status — PATCH /tarefas/:id/status
   "status": "concluída"
 }
 
-⚠️ Validações e Tratamento de Erros
+---
+
+## ⚠️ Validações e Tratamento de Erros
 A API possui middlewares inteligentes para garantir a integridade dos dados e segurança das requisições:
 
-🔍 Validações automáticas (validateTarefa.js)
+---
+
+## 🔍 Validações automáticas (validateTarefa.js)
 titulo é obrigatório e não pode estar vazio.
 
 status deve ser um dos valores permitidos: "a fazer", "em andamento", "concluída".
 
-⚙️ Middlewares incluídos
+---
+
+## ⚙️ Middlewares incluídos
 Middleware	Função
 requestLogger	Exibe no console detalhes das requisições e tempo de resposta
 rateLimiter	Limita o número de requisições por IP
@@ -103,7 +119,9 @@ validateTarefa	Valida os campos titulo, descricao e status
 errorHandler	Retorna erros personalizados em formato JSON
 notFound	Lida com rotas inexistentes (404)
 
-🧪 Testando com Postman
+---
+
+## 🧪 Testando com Postman
 O projeto inclui um arquivo postman_collection.json com todos os endpoints configurados.
 
 Abra o Postman
@@ -114,13 +132,17 @@ Selecione o arquivo postman_collection.json
 
 Execute as requisições e veja os retornos da API 🎯
 
-📘 Scripts Disponíveis
+---
+
+## 📘 Scripts Disponíveis
 Comando	Descrição
 npm run dev	Inicia o servidor com Nodemon
 npm start	Inicia o servidor normalmente
 npx sequelize-cli db:migrate	Executa migrations (opcional)
 
-🧱 Banco de Dados
+---
+
+## 🧱 Banco de Dados
 O Sequelize criará automaticamente o arquivo database.sqlite na raiz do projeto.
 Você pode inspecionar os dados utilizando ferramentas como:
 
@@ -128,9 +150,10 @@ DB Browser for SQLite
 
 Beekeeper Studio
 
-🧰 .gitignore
-O projeto inclui um .gitignore configurado para ignorar arquivos sensíveis e diretórios desnecessários:
+---
 
+## 🧰 .gitignore
+O projeto inclui um .gitignore configurado para ignorar arquivos sensíveis e diretórios desnecessários:
 
 node_modules/
 .env
@@ -141,10 +164,14 @@ uploads/
 .vscode/
 .idea/
 
+---
+
 📜 Licença
 Este projeto é open-source e está sob a licença MIT.
 
-👨‍💻 Autor
+---
+
+## 👨‍💻 Autor
 Breno Araujo Melo
 📧 E-mail: devbrenoaraujo@gmail.com
-💼 LinkedIn: 
+💼 LinkedIn: https://www.linkedin.com/in/brenoaraujodev/
