@@ -1,0 +1,9 @@
+{
+  "name": "api-tarefas-root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "postinstall": "npm --prefix backend install",
+    "start:backend": "npm --prefix backend start"
+  }
+}
