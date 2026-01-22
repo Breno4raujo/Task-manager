@@ -1,0 +1,85 @@
+* {
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  min-height: 100vh;
+}
+
+header {
+  background: rgba(255,255,255,0.1);
+  color: white;
+  padding: 1rem;
+}
+
+nav {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+nav button {
+  flex: 1;
+  border: none;
+  padding: 0.6rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+main {
+  background: #f9fafb;
+  margin: 1rem;
+  padding: 1rem;
+  border-radius: 16px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+input, textarea, button {
+  padding: 0.7rem;
+}
+
+.tasks {
+  display: grid;
+  gap: 1rem;
+}
+
+article {
+  background: white;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+article.completed {
+  opacity: 0.6;
+  text-decoration: line-through;
+}
+
+/* Skeleton */
+#skeleton {
+  display: grid;
+  gap: 1rem;
+}
+
+.skeleton-card {
+  height: 80px;
+  background: linear-gradient(90deg, #e5e7eb, #f3f4f6, #e5e7eb);
+  animation: pulse 1.5s infinite;
+  border-radius: 12px;
+}
+
+@keyframes pulse {
+  0% { background-position: 0% }
+  100% { background-position: 100% }
+}
+
+.tab { display: none; }
+.tab.active { display: block; }
