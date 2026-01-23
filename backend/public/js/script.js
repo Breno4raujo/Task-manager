@@ -5,9 +5,9 @@ const form = document.getElementById("task-form");
 const skeleton = document.getElementById("skeleton");
 const feedback = document.getElementById("feedback");
 
-/* NAVEGAÇÃO ENTRE ABAS */
-document.querySelectorAll("nav button").forEach(btn => {
-  btn.addEventListener("click", () => {
+/* ABAS */
+document.querySelectorAll("nav button").forEach(button => {
+  button.addEventListener("click", () => {
     document.querySelectorAll(".tab").forEach(tab =>
       tab.classList.remove("active")
     );
@@ -16,87 +16,81 @@ document.querySelectorAll("nav button").forEach(btn => {
       b.classList.remove("active")
     );
 
-    document.getElementById(btn.dataset.tab).classList.add("active");
-    btn.classList.add("active");
+    document.getElementById(button.dataset.tab).classList.add("active");
+    button.classList.add("active");
 
-    if (btn.dataset.tab === "list") {
+    if (button.dataset.tab === "list") {
       loadTasks();
     }
   });
 });
 
-/* FEEDBACK VISUAL */
-function showFeedback(message, type = "success") {
-  feedback.textContent = message;
+/* FEEDBACK */
+function showFeedback(text, type = "success") {
+  feedback.textContent = text;
   feedback.className = type;
 
   setTimeout(() => {
     feedback.textContent = "";
     feedback.className = "";
-  }, 2000);
+  }, 2500);
 }
 
 /* API */
-async function fetchTasks() {
+async function getTasks() {
   const res = await fetch(API_URL);
-  if (!res.ok) throw new Error("Erro ao buscar tarefas");
+  if (!res.ok) throw new Error();
   return res.json();
 }
 
-async function createTask(data) {
+async function postTask(task) {
   const res = await fetch(API_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
+    body: JSON.stringify(task)
   });
-
-  if (!res.ok) throw new Error("Erro ao criar tarefa");
+  if (!res.ok) throw new Error();
 }
 
-async function updateTask(id, concluida) {
+async function putTask(id, concluida) {
   const res = await fetch(`${API_URL}/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ concluida })
   });
-
-  if (!res.ok) throw new Error("Erro ao atualizar tarefa");
+  if (!res.ok) throw new Error();
 }
 
-async function deleteTask(id) {
+async function removeTask(id) {
   const res = await fetch(`${API_URL}/${id}`, {
     method: "DELETE"
   });
-
-  if (!res.ok) throw new Error("Erro ao deletar tarefa");
+  if (!res.ok) throw new Error();
 }
 
-/* RENDERIZAÇÃO */
-function renderTask(task) {
-  const article = document.createElement("article");
-  article.className = "task-card";
+/* RENDER */
+function renderTask({ id, titulo, descricao, concluida }) {
+  const card = document.createElement("article");
+  card.className = "task-card";
+  if (concluida) card.classList.add("completed");
 
-  if (task.concluida) {
-    article.classList.add("completed");
-  }
-
-  article.innerHTML = `
-    <h3>${task.titulo}</h3>
-    <p>${task.descricao}</p>
+  card.innerHTML = `
+    <h3>${titulo}</h3>
+    <p>${descricao}</p>
 
     <div class="task-actions">
       <label>
-        <input type="checkbox" ${task.concluida ? "checked" : ""} />
+        <input type="checkbox" ${concluida ? "checked" : ""} />
         Concluída
       </label>
-      <button title="Excluir tarefa">🗑</button>
+      <button>🗑</button>
     </div>
   `;
 
-  // Atualizar status
-  article.querySelector("input").addEventListener("change", async e => {
+  // Concluir tarefa
+  card.querySelector("input").addEventListener("change", async e => {
     try {
-      await updateTask(task.id, e.target.checked);
+      await putTask(id, e.target.checked);
       loadTasks();
     } catch {
       showFeedback("Erro ao atualizar tarefa", "error");
@@ -104,60 +98,68 @@ function renderTask(task) {
   });
 
   // Excluir tarefa
-  article.querySelector("button").addEventListener("click", async () => {
-    article.style.opacity = "0";
-    article.style.transform = "scale(0.95)";
-
-    setTimeout(async () => {
-      try {
-        await deleteTask(task.id);
-        loadTasks();
-      } catch {
-        showFeedback("Erro ao deletar tarefa", "error");
-      }
-    }, 200);
+  card.querySelector("button").addEventListener("click", async () => {
+    try {
+      await removeTask(id);
+      loadTasks();
+    } catch {
+      showFeedback("Erro ao excluir tarefa", "error");
+    }
   });
 
-  taskList.appendChild(article);
+  taskList.appendChild(card);
 }
 
-/* CONTROLE DE TAREFAS*/
+/* LOAD */
 async function loadTasks() {
   skeleton.style.display = "grid";
   taskList.innerHTML = "";
-  feedback.textContent = "";
 
   try {
-    const tasks = await fetchTasks();
+    const tasks = await getTasks();
 
-    if (tasks.length === 0) {
-      taskList.innerHTML = "<p>Nenhuma tarefa cadastrada</p>";
+    if (!Array.isArray(tasks) || tasks.length === 0) {
+      taskList.innerHTML = "<p>Nenhuma tarefa encontrada</p>";
       return;
     }
 
-    tasks.forEach(renderTask);
+    tasks.forEach(task => {
+      
+      if (
+        typeof task.id === "number" &&
+        "titulo" in task &&
+        "descricao" in task &&
+        "concluida" in task
+      ) {
+        renderTask(task);
+      }
+    });
   } catch {
-    showFeedback("Erro ao conectar com a API", "error");
+    showFeedback("Erro ao carregar tarefas", "error");
   } finally {
     skeleton.style.display = "none";
   }
 }
 
-/* EVENTOS */
+/* CREATE*/
 form.addEventListener("submit", async e => {
   e.preventDefault();
 
-  try {
-    await createTask({
-      titulo: title.value,
-      descricao: description.value
-    });
+  const titulo = document.getElementById("title").value.trim();
+  const descricao = document.getElementById("description").value.trim();
 
-    showFeedback("✅ Tarefa adicionada!");
+  if (!titulo || !descricao) {
+    showFeedback("Preencha todos os campos", "error");
+    return;
+  }
+
+  try {
+    await postTask({ titulo, descricao });
     form.reset();
+    showFeedback("Tarefa criada com sucesso");
     loadTasks();
   } catch {
-    showFeedback("Erro ao adicionar tarefa", "error");
+    showFeedback("Erro ao criar tarefa", "error");
   }
 });
 
