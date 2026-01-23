@@ -1,41 +1,72 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Minhas Tarefas</title>
-  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="css/style.css" />
 </head>
+
 <body>
 
-<header>
-  <h1> Minhas Tarefas</h1>
-  <nav>
-    <button data-tab="create" class="active">Criar</button>
-    <button data-tab="list">Tarefas</button>
-  </nav>
-</header>
+  <header>
+    <h1>Minhas Tarefas</h1>
+    <nav>
+      <button data-tab="create" class="active">Criar</button>
+      <button data-tab="list">Tarefas</button>
+    </nav>
+  </header>
 
-<main>
-  <section id="create" class="tab active">
-    <form id="task-form">
-      <input type="text" id="title" placeholder="Título da tarefa" required />
-      <textarea id="description" placeholder="Descrição da tarefa" required></textarea>
-      <button type="submit">Adicionar</button>
-    </form>
-  </section>
+  <main>
 
-  <section id="list" class="tab">
-    <div id="skeleton">
-      <div class="skeleton-card"></div>
-      <div class="skeleton-card"></div>
-    </div>
+    <section id="create" class="tab active">
+      <form id="task-form">
+        <input type="text" id="title" placeholder="Título da tarefa" required />
+        <textarea id="description" placeholder="Descrição da tarefa" required></textarea>
 
-    <section class="tasks" id="task-list"></section>
-    <p id="feedback"></p>
-  </section>
-</main>
+        <label for="status" class="status-label">Status</label>
 
-<script src="js/script.js"></script>
+<select id="status" class="status-select">
+  <option value="pendente"> Pendente</option>
+  <option value="andamento"> Em andamento</option>
+  <option value="concluida"> Concluída</option>
+</select>
+
+        <button type="submit">Adicionar</button>
+      </form>
+    </section>
+
+    <section id="list" class="tab">
+
+      <input type="search" id="search" placeholder="Buscar tarefa..." aria-label="Buscar tarefas" />
+
+      <div class="filters">
+        <button data-filter="all" class="active">Todas</button>
+        <button data-filter="pendente">Pendentes</button>
+        <button data-filter="andamento">Em andamento</button>
+        <button data-filter="concluida">Concluídas</button>
+      </div>
+
+      <p id="task-counter">0 tarefas</p>
+
+      <div id="skeleton">
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+      </div>
+
+      <section class="tasks" id="task-list"></section>
+
+      <p id="empty-state" style="display:none;">
+        Nenhuma tarefa encontrada 👀
+      </p>
+
+      <p id="feedback"></p>
+    </section>
+
+  </main>
+
+  <script src="js/script.js"></script>
 </body>
+
 </html>

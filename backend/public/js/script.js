@@ -5,6 +5,9 @@ const form = document.getElementById("task-form");
 const skeleton = document.getElementById("skeleton");
 const feedback = document.getElementById("feedback");
 
+/* STATUS SELECT */
+const statusSelect = document.getElementById("status");
+
 /* ABAS */
 document.querySelectorAll("nav button").forEach(button => {
   button.addEventListener("click", () => {
@@ -36,6 +39,15 @@ function showFeedback(text, type = "success") {
   }, 2500);
 }
 
+/* STATUS COLOR */
+function updateStatusColor() {
+  statusSelect.classList.remove("pendente", "andamento", "concluida");
+  statusSelect.classList.add(statusSelect.value);
+}
+
+updateStatusColor();
+statusSelect.addEventListener("change", updateStatusColor);
+
 /* API */
 async function getTasks() {
   const res = await fetch(API_URL);
@@ -62,9 +74,7 @@ async function putTask(id, concluida) {
 }
 
 async function removeTask(id) {
-  const res = await fetch(`${API_URL}/${id}`, {
-    method: "DELETE"
-  });
+  const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
   if (!res.ok) throw new Error();
 }
 
@@ -72,22 +82,27 @@ async function removeTask(id) {
 function renderTask({ id, titulo, descricao, concluida }) {
   const card = document.createElement("article");
   card.className = "task-card";
+
   if (concluida) card.classList.add("completed");
 
   card.innerHTML = `
     <h3>${titulo}</h3>
     <p>${descricao}</p>
 
+    <span class="status">
+      ${concluida ? " Concluída" : " Pendente"}
+    </span>
+
     <div class="task-actions">
       <label>
         <input type="checkbox" ${concluida ? "checked" : ""} />
         Concluída
       </label>
-      <button>🗑</button>
+      <button title="Excluir tarefa">🗑</button>
     </div>
   `;
 
-  // Concluir tarefa
+  /* Atualizar status */
   card.querySelector("input").addEventListener("change", async e => {
     try {
       await putTask(id, e.target.checked);
@@ -97,7 +112,7 @@ function renderTask({ id, titulo, descricao, concluida }) {
     }
   });
 
-  // Excluir tarefa
+  /* Excluir */
   card.querySelector("button").addEventListener("click", async () => {
     try {
       await removeTask(id);
@@ -124,7 +139,6 @@ async function loadTasks() {
     }
 
     tasks.forEach(task => {
-      
       if (
         typeof task.id === "number" &&
         "titulo" in task &&
@@ -141,21 +155,26 @@ async function loadTasks() {
   }
 }
 
-/* CREATE*/
+/* CREATE */
 form.addEventListener("submit", async e => {
   e.preventDefault();
 
   const titulo = document.getElementById("title").value.trim();
   const descricao = document.getElementById("description").value.trim();
+  const status = statusSelect.value;
 
   if (!titulo || !descricao) {
     showFeedback("Preencha todos os campos", "error");
     return;
   }
 
+  const concluida = status === "concluida";
+
   try {
-    await postTask({ titulo, descricao });
+    await postTask({ titulo, descricao, concluida });
     form.reset();
+    statusSelect.value = "pendente";
+    updateStatusColor();
     showFeedback("Tarefa criada com sucesso");
     loadTasks();
   } catch {
