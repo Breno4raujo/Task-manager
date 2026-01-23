@@ -1,4 +1,4 @@
-const API_URL = "https://api-tarefas-4slt.onrender.com/tarefas";
+const API_URL = "/tarefas";
 
 const taskList = document.getElementById("task-list");
 const form = document.getElementById("task-form");
