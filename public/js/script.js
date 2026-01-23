@@ -112,7 +112,7 @@ form.addEventListener("submit", async e => {
     descricao: description.value
   });
 
-  showFeedback("✅ Tarefa adicionada!");
+  showFeedback(" Tarefa adicionada!");
   form.reset();
   loadTasks();
 });
