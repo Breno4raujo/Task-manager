@@ -5,7 +5,7 @@ const form = document.getElementById("task-form");
 const skeleton = document.getElementById("skeleton");
 const feedback = document.getElementById("feedback");
 
-/* ABAS */
+/* NAVEGAÇÃO ENTRE ABAS */
 document.querySelectorAll("nav button").forEach(btn => {
   btn.addEventListener("click", () => {
     document.querySelectorAll(".tab").forEach(tab =>
@@ -18,83 +18,123 @@ document.querySelectorAll("nav button").forEach(btn => {
 
     document.getElementById(btn.dataset.tab).classList.add("active");
     btn.classList.add("active");
+
+    if (btn.dataset.tab === "list") {
+      loadTasks();
+    }
   });
 });
 
-/* FEEDBACK */
+/* FEEDBACK VISUAL */
 function showFeedback(message, type = "success") {
   feedback.textContent = message;
   feedback.className = type;
 
   setTimeout(() => {
     feedback.textContent = "";
+    feedback.className = "";
   }, 2000);
 }
 
 /* API */
 async function fetchTasks() {
   const res = await fetch(API_URL);
+  if (!res.ok) throw new Error("Erro ao buscar tarefas");
   return res.json();
 }
 
 async function createTask(data) {
-  return fetch(API_URL, {
+  const res = await fetch(API_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data)
   });
+
+  if (!res.ok) throw new Error("Erro ao criar tarefa");
 }
 
 async function updateTask(id, concluida) {
-  return fetch(`${API_URL}/${id}`, {
+  const res = await fetch(`${API_URL}/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ concluida })
   });
+
+  if (!res.ok) throw new Error("Erro ao atualizar tarefa");
 }
 
 async function deleteTask(id) {
-  return fetch(`${API_URL}/${id}`, { method: "DELETE" });
+  const res = await fetch(`${API_URL}/${id}`, {
+    method: "DELETE"
+  });
+
+  if (!res.ok) throw new Error("Erro ao deletar tarefa");
 }
 
-/* RENDER */
+/* RENDERIZAÇÃO */
 function renderTask(task) {
   const article = document.createElement("article");
-  if (task.concluida) article.classList.add("completed");
+  article.className = "task-card";
+
+  if (task.concluida) {
+    article.classList.add("completed");
+  }
 
   article.innerHTML = `
     <h3>${task.titulo}</h3>
     <p>${task.descricao}</p>
-    <label>
-      <input type="checkbox" ${task.concluida ? "checked" : ""}/> Concluída
-    </label>
-    <button>🗑 Excluir</button>
+
+    <div class="task-actions">
+      <label>
+        <input type="checkbox" ${task.concluida ? "checked" : ""} />
+        Concluída
+      </label>
+      <button title="Excluir tarefa">🗑</button>
+    </div>
   `;
 
-  article.querySelector("input").addEventListener("change", e =>
-    updateTask(task.id, e.target.checked)
-  );
+  // Atualizar status
+  article.querySelector("input").addEventListener("change", async e => {
+    try {
+      await updateTask(task.id, e.target.checked);
+      loadTasks();
+    } catch {
+      showFeedback("Erro ao atualizar tarefa", "error");
+    }
+  });
 
+  // Excluir tarefa
   article.querySelector("button").addEventListener("click", async () => {
     article.style.opacity = "0";
     article.style.transform = "scale(0.95)";
 
     setTimeout(async () => {
-      await deleteTask(task.id);
-      loadTasks();
+      try {
+        await deleteTask(task.id);
+        loadTasks();
+      } catch {
+        showFeedback("Erro ao deletar tarefa", "error");
+      }
     }, 200);
   });
 
   taskList.appendChild(article);
 }
 
-/* CONTROLE */
+/* CONTROLE DE TAREFAS*/
 async function loadTasks() {
-  skeleton.style.display = "block";
+  skeleton.style.display = "grid";
   taskList.innerHTML = "";
+  feedback.textContent = "";
 
   try {
     const tasks = await fetchTasks();
+
+    if (tasks.length === 0) {
+      taskList.innerHTML = "<p>Nenhuma tarefa cadastrada</p>";
+      return;
+    }
+
     tasks.forEach(renderTask);
   } catch {
     showFeedback("Erro ao conectar com a API", "error");
@@ -107,14 +147,18 @@ async function loadTasks() {
 form.addEventListener("submit", async e => {
   e.preventDefault();
 
-  await createTask({
-    titulo: title.value,
-    descricao: description.value
-  });
+  try {
+    await createTask({
+      titulo: title.value,
+      descricao: description.value
+    });
 
-  showFeedback(" Tarefa adicionada!");
-  form.reset();
-  loadTasks();
+    showFeedback("✅ Tarefa adicionada!");
+    form.reset();
+    loadTasks();
+  } catch {
+    showFeedback("Erro ao adicionar tarefa", "error");
+  }
 });
 
 /* INIT */
