@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>To‑Do List</title>
+  <title>Minhas Tarefas</title>
   <link rel="stylesheet" href="css/style.css"/>
 </head>
 <body>
@@ -11,8 +11,8 @@
 <header>
   <h1> Minhas Tarefas</h1>
   <nav>
-    <button data-tab="create">Criar</button>
-    <button data-tab="list">Minhas Tarefas</button>
+    <button data-tab="create" class="active">Criar</button>
+    <button data-tab="list">Tarefas</button>
   </nav>
 </header>
 
@@ -30,6 +30,7 @@
       <div class="skeleton-card"></div>
       <div class="skeleton-card"></div>
     </div>
+
     <section class="tasks" id="task-list"></section>
     <p id="feedback"></p>
   </section>
