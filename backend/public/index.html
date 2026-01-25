@@ -1,65 +1,44 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Minhas Tarefas</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
 
-<header>
-  <h1>Minhas Tarefas</h1>
-  <nav>
-    <button data-tab="create" class="active">Criar</button>
-    <button data-tab="list">Tarefas</button>
-  </nav>
-</header>
+  <main>
+    <header>
+      <h1>Minhas Tarefas</h1>
+    </header>
 
-<main>
+    <!-- FORMULÁRIO -->
+    <form id="task-form">
+      <input id="title" placeholder="Título da tarefa" required />
+      <textarea id="description" placeholder="Descrição da tarefa" required></textarea>
 
-<section id="create" class="tab active">
-  <form id="task-form">
-    <input type="text" id="title" placeholder="Título da tarefa" required />
-    <textarea id="description" placeholder="Descrição da tarefa" required></textarea>
+      <!-- SELECT CUSTOMIZADO -->
+      <label>Status</label>
+      <div class="custom-select" id="status-select">
+        <div class="select-selected pendente">Pendente</div>
 
-    <label class="status-label">Status</label>
-    <select id="status" class="status-select pendente">
-      <option value="pendente">Pendente</option>
-      <option value="em andamento">Em andamento</option>
-      <option value="concluída">Concluída</option>
-    </select>
+        <div class="select-options">
+          <div data-value="pendente" class="pendente">Pendente</div>
+          <div data-value="em andamento" class="andamento">Em andamento</div>
+          <div data-value="concluída" class="concluida">Concluída</div>
+        </div>
+      </div>
 
-    <button type="submit">Adicionar</button>
-  </form>
-</section>
+      <button type="submit">Criar</button>
+    </form>
 
-<section id="list" class="tab">
+    <!-- LISTA -->
+    <section id="task-list" class="tasks"></section>
+  </main>
 
-  <input type="search" id="search" placeholder="Buscar tarefa..." />
-
-  <div class="filters">
-    <button data-filter="all" class="active">Todas</button>
-    <button data-filter="pendente">Pendentes</button>
-    <button data-filter="em andamento">Em andamento</button>
-    <button data-filter="concluída">Concluídas</button>
-  </div>
-
-  <p id="task-counter">0 tarefas</p>
-
-  <div id="skeleton">
-    <div class="skeleton-card"></div>
-    <div class="skeleton-card"></div>
-  </div>
-
-  <section class="tasks" id="task-list"></section>
-
-  <p id="feedback"></p>
-</section>
-
-</main>
-
-<script src="js/script.js"></script>
+  <script src="script.js"></script>
 </body>
+
 </html>
