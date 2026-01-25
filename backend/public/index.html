@@ -15,6 +15,9 @@
 
   <!-- TAREFAS -->
   <section id="tasks" class="tab active">
+
+    <input id="search" placeholder="Buscar tarefa..." />
+
     <div class="filters">
       <button class="active" data-filter="todas">Todas</button>
       <button data-filter="pendente">Pendentes</button>
@@ -27,15 +30,16 @@
 
   <!-- ADICIONAR -->
   <section id="add" class="tab">
-    <input id="title" placeholder="Título da tarefa" />
-    
+    <input id="title" placeholder="Título" />
+    <textarea id="description" placeholder="Descrição"></textarea>
+
     <select id="status">
       <option value="pendente">Pendente</option>
       <option value="andamento">Em andamento</option>
       <option value="concluida">Concluída</option>
     </select>
 
-    <button id="addTask">Adicionar</button>
+    <button id="addTask">Adicionar tarefa</button>
   </section>
 </main>
 
