@@ -133,6 +133,8 @@ input, textarea, select {
 /* SELECT STATUS */
 select {
   font-weight:600;
+  padding:.5rem;
+  border-radius:12px;
 }
 
 select[value="pendente"] { background:#fee2e2; }
@@ -178,4 +180,41 @@ select[value="concluida"] { background:#dcfce7; }
 .filters button.active {
   background:#4f46e5;
   color:white;
+}
+
+@media (max-width: 480px) {
+  main {
+    margin:.5rem;
+    padding:.8rem;
+    border-radius:18px;
+  }
+
+  nav {
+    flex-direction:column;
+  }
+
+  nav button {
+    font-size:.9rem;
+  }
+
+  .task-card {
+    padding:.8rem;
+  }
+
+  .task-card h4 {
+    font-size:1rem;
+  }
+
+  .task-card p {
+    font-size:.85rem;
+  }
+
+  .filters {
+    flex-wrap:wrap;
+  }
+
+  .filters button {
+    flex:1 1 48%;
+    font-size:.75rem;
+  }
 }
