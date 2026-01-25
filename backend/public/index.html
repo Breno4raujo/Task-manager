@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <title>Task Manager</title>
   <link rel="stylesheet" href="style.css" />
-  <!-- Ícones -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
@@ -15,10 +14,9 @@
     <button data-tab="add">Criar</button>
   </nav>
 
-  <!-- TAREFAS -->
   <section id="tasks" class="tab active">
-
-    <input id="search" placeholder="Buscar tarefa..." />
+    <input id="search" placeholder="Buscar tarefa..." maxlength="40" />
+    <small id="searchLimit" class="limit-msg"></small>
 
     <div class="filters">
       <button class="active" data-filter="todas">Todas</button>
@@ -30,10 +28,12 @@
     <div class="tasks" id="taskList"></div>
   </section>
 
-  <!-- ADICIONAR -->
   <section id="add" class="tab">
-    <input id="title" placeholder="Título da tarefa" />
-    <textarea id="description" placeholder="Descrição"></textarea>
+    <input id="title" placeholder="Título da tarefa (máx 350)" maxlength="350" />
+    <small id="titleLimit" class="limit-msg"></small>
+
+    <textarea id="description" placeholder="Descrição (máx 1500)" maxlength="1500"></textarea>
+    <small id="descLimit" class="limit-msg"></small>
 
     <select id="status">
       <option value="pendente">Pendente</option>

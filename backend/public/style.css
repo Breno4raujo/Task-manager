@@ -2,7 +2,7 @@
   box-sizing: border-box;
   font-family: system-ui;
 }
-
+/* RESET */
 body {
   background: linear-gradient(135deg,#6366f1,#4f46e5);
   display:flex;
@@ -10,12 +10,12 @@ body {
   min-height:100vh;
   animation: fadeIn .4s ease;
 }
-
+/* FADE IN */
 @keyframes fadeIn {
   from { opacity:0 }
   to { opacity:1 }
 }
-
+/* CONTAINER */
 main {
   background:white;
   max-width:420px;
@@ -25,7 +25,7 @@ main {
   border-radius:22px;
   box-shadow:0 25px 40px rgba(0,0,0,.25);
 }
-
+/* NAVIGATION */
 nav {
   display:flex;
   gap:.5rem;
@@ -54,12 +54,12 @@ nav button.active {
   display:block;
   animation: slide .3s ease;
 }
-
+/* SLIDE ANIMATION */
 @keyframes slide {
   from { opacity:0; transform:translateY(10px) }
   to { opacity:1; transform:translateY(0) }
 }
-
+/* FORMULÁRIO */
 input, textarea, select {
   width:100%;
   padding:.7rem;
@@ -67,7 +67,7 @@ input, textarea, select {
   border:1px solid #d1d5db;
   margin-bottom:.6rem;
 }
-
+/* BOTÃO PRINCIPAL */
 .primary {
   background:#4f46e5;
   color:white;
@@ -78,12 +78,12 @@ input, textarea, select {
   cursor:pointer;
   transition:.25s;
 }
-
+/* BOTÃO PRINCIPAL HOVER */
 .primary:hover {
   transform:scale(1.05);
   box-shadow:0 10px 25px rgba(79,70,229,.4);
 }
-
+/* LISTA DE TAREFAS */
 .tasks {
   display:flex;
   flex-direction:column;
@@ -97,16 +97,16 @@ input, textarea, select {
   box-shadow:0 8px 16px rgba(0,0,0,.1);
   animation: pop .25s ease;
 }
-
+/* POP ANIMATION */
 @keyframes pop {
   from { opacity:0; transform:scale(.95) }
   to { opacity:1; transform:scale(1) }
 }
-
+/* CARD CONTENT */
 .task-card h4 {
   margin:0;
 }
-
+/* CARD DESCRIPTION */
 .task-card p {
   font-size:.9rem;
   margin:.4rem 0;
@@ -181,7 +181,7 @@ select[value="concluida"] { background:#dcfce7; }
   background:#4f46e5;
   color:white;
 }
-
+/* RESPONSIVO  */
 @media (max-width: 480px) {
   main {
     margin:.5rem;
