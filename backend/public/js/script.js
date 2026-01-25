@@ -1,37 +1,82 @@
-const API_URL = "https://api-tarefas.onrender.com/tarefas";
+const API_URL = "/tarefas";
 
-// Mapeia status do backend para classes CSS //
+const taskList = document.getElementById("task-list");
+const form = document.getElementById("task-form");
+const skeleton = document.getElementById("skeleton");
+const feedback = document.getElementById("feedback");
+const statusSelect = document.getElementById("status");
+
 const STATUS_MAP = {
   "pendente": "pendente",
   "em andamento": "andamento",
   "concluída": "concluida"
 };
 
-// Elementos //
-const form = document.getElementById("task-form");
-const titleInput = document.getElementById("title");
-const descInput = document.getElementById("description");
-const statusSelect = document.getElementById("status");
-const taskList = document.getElementById("task-list");
-const counter = document.getElementById("counter");
+/* abas */
+document.querySelectorAll("nav button").forEach(button => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(tab =>
+      tab.classList.remove("active")
+    );
 
-// Filtros //
-const filterButtons = document.querySelectorAll(".filters button");
+    document.querySelectorAll("nav button").forEach(b =>
+      b.classList.remove("active")
+    );
 
+    document.getElementById(button.dataset.tab).classList.add("active");
+    button.classList.add("active");
 
-// BUSCAR TAREFAS //
-async function fetchTasks() {
-  taskList.innerHTML = "";
-  const response = await fetch(API_URL);
-  const tasks = await response.json();
+    if (button.dataset.tab === "list") {
+      loadTasks();
+    }
+  });
+});
 
-  tasks.forEach(renderTask);
-  updateCounter();
+/* feedback */
+function showFeedback(text, type = "success") {
+  feedback.textContent = text;
+  feedback.className = type;
+
+  setTimeout(() => {
+    feedback.textContent = "";
+    feedback.className = "";
+  }, 2500);
 }
 
-// RENDERIZAR CARD //
-function renderTask(task) {
-  const { id, titulo, descricao, status } = task;
+/* api */
+async function getTasks() {
+  const res = await fetch(API_URL);
+  if (!res.ok) throw new Error();
+  return res.json();
+}
+
+async function postTask(task) {
+  const res = await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(task)
+  });
+  if (!res.ok) throw new Error();
+}
+
+async function putTask(id, status) {
+  const concluida = status === "concluída";
+
+  const res = await fetch(`${API_URL}/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ status, concluida })
+  });
+  if (!res.ok) throw new Error();
+}
+
+async function removeTask(id) {
+  const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+  if (!res.ok) throw new Error();
+}
+
+/* render */
+function renderTask({ id, titulo, descricao, status }) {
   const cssStatus = STATUS_MAP[status];
 
   const card = document.createElement("article");
@@ -42,95 +87,101 @@ function renderTask(task) {
     <h3>${titulo}</h3>
     <p>${descricao}</p>
 
-    <label>Status</label>
+    <label class="status-label">Status</label>
     <select class="status-select ${cssStatus}">
-      <option value="pendente" ${status === "pendente" ? "selected" : ""}>Pendente</option>
-      <option value="em andamento" ${status === "em andamento" ? "selected" : ""}>Em andamento</option>
-      <option value="concluída" ${status === "concluída" ? "selected" : ""}>Concluída</option>
+      <option value="pendente">Pendente</option>
+      <option value="em andamento">Em andamento</option>
+      <option value="concluída">Concluída</option>
     </select>
 
     <footer>
-      <button class="delete-btn">🗑</button>
+      <button title="Excluir">🗑</button>
     </footer>
   `;
 
-  // Atualizar status //
   const select = card.querySelector("select");
-  select.addEventListener("change", async () => {
-    const newStatus = select.value;
-    const newCss = STATUS_MAP[newStatus];
+  select.value = status;
 
-    await fetch(`${API_URL}/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: newStatus })
-    });
+  select.addEventListener("change", async e => {
+    const newStatus = e.target.value;
+    const newCssStatus = STATUS_MAP[newStatus];
 
-    card.className = `task-card ${newCss}`;
-    card.dataset.status = newCss;
-    select.className = `status-select ${newCss}`;
+    select.className = `status-select ${newCssStatus}`;
+    card.className = `task-card ${newCssStatus}`;
+    card.dataset.status = newCssStatus;
+
+    try {
+      await putTask(id, newStatus);
+    } catch {
+      showFeedback("Erro ao atualizar status", "error");
+    }
   });
 
-  // Excluir tarefa //
-  card.querySelector(".delete-btn").addEventListener("click", async () => {
-    await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-    card.remove();
-    updateCounter();
+  card.querySelector("button").addEventListener("click", async () => {
+    try {
+      await removeTask(id);
+      loadTasks();
+    } catch {
+      showFeedback("Erro ao excluir tarefa", "error");
+    }
   });
 
   taskList.appendChild(card);
 }
 
-// CRIAR TAREFA //
-form.addEventListener("submit", async (e) => {
+/* carregar tarefas */
+async function loadTasks() {
+  skeleton.style.display = "block";
+  taskList.innerHTML = "";
+
+  try {
+    const tasks = await getTasks();
+
+    if (!tasks.length) {
+      taskList.innerHTML = "<p>Nenhuma tarefa encontrada</p>";
+      return;
+    }
+
+    tasks.forEach(renderTask);
+    document.getElementById("task-counter").textContent =
+      `${tasks.length} tarefas`;
+  } catch {
+    showFeedback("Erro ao carregar tarefas", "error");
+  } finally {
+    skeleton.style.display = "none";
+  }
+}
+
+/* criar tarefa */
+form.addEventListener("submit", async e => {
   e.preventDefault();
 
-  const newTask = {
-    titulo: titleInput.value,
-    descricao: descInput.value,
-    status: statusSelect.value
-  };
+  const titulo = title.value.trim();
+  const descricao = description.value.trim();
+  const status = statusSelect.value;
 
-  await fetch(API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(newTask)
-  });
+  if (!titulo || !descricao || !status) {
+    showFeedback("Preencha todos os campos", "error");
+    return;
+  }
 
-  form.reset();
-  fetchTasks();
+  try {
+    await postTask({ titulo, descricao, status });
+    form.reset();
+    statusSelect.value = "pendente";
+    statusSelect.className = "status-select pendente";
+    showFeedback("Tarefa criada com sucesso");
+    loadTasks();
+  } catch {
+    showFeedback("Erro ao criar tarefa", "error");
+  }
 });
 
-// CONTADOR //
-function updateCounter() {
-  const total = document.querySelectorAll(".task-card").length;
-  counter.textContent = `${total} tarefas`;
-}
-
-
-// FILTROS //
-filterButtons.forEach(button => {
-  button.addEventListener("click", () => {
-    filterButtons.forEach(b => b.classList.remove("active"));
-    button.classList.add("active");
-
-    const filter = button.dataset.filter;
-    applyFilter(filter);
-  });
+/* cor do select criar */
+statusSelect.addEventListener("change", () => {
+  statusSelect.className =
+    "status-select " + STATUS_MAP[statusSelect.value];
 });
 
-function applyFilter(filter) {
-  const cards = document.querySelectorAll(".task-card");
-
-  cards.forEach(card => {
-    if (filter === "all") {
-      card.style.display = "block";
-    } else {
-      card.style.display =
-        card.dataset.status === filter ? "block" : "none";
-    }
-  });
-}
-
-// Inicialização
-fetchTasks();
+/* init */
+loadTasks();
