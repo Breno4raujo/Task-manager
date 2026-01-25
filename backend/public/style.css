@@ -1,11 +1,19 @@
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+  font-family: system-ui;
+}
 
 body {
   background: linear-gradient(135deg,#6366f1,#4f46e5);
-  font-family: system-ui;
   display:flex;
   justify-content:center;
   min-height:100vh;
+  animation: fadeIn .4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity:0 }
+  to { opacity:1 }
 }
 
 main {
@@ -14,7 +22,8 @@ main {
   width:100%;
   margin:1rem;
   padding:1rem;
-  border-radius:20px;
+  border-radius:22px;
+  box-shadow:0 25px 40px rgba(0,0,0,.25);
 }
 
 nav {
@@ -25,27 +34,54 @@ nav {
 
 nav button {
   flex:1;
-  padding:.6rem;
+  padding:.7rem;
   border:none;
-  border-radius:12px;
+  border-radius:14px;
   cursor:pointer;
   background:#e5e7eb;
+  font-weight:600;
+  transition:.25s;
 }
 
 nav button.active {
   background:#4f46e5;
   color:white;
+  transform:scale(1.05);
 }
 
 .tab { display:none; }
-.tab.active { display:block; }
+.tab.active {
+  display:block;
+  animation: slide .3s ease;
+}
 
-input, textarea, select, button {
+@keyframes slide {
+  from { opacity:0; transform:translateY(10px) }
+  to { opacity:1; transform:translateY(0) }
+}
+
+input, textarea, select {
   width:100%;
-  padding:.6rem;
-  margin-bottom:.5rem;
-  border-radius:12px;
+  padding:.7rem;
+  border-radius:14px;
   border:1px solid #d1d5db;
+  margin-bottom:.6rem;
+}
+
+.primary {
+  background:#4f46e5;
+  color:white;
+  border:none;
+  padding:.8rem;
+  border-radius:16px;
+  font-weight:bold;
+  cursor:pointer;
+  transition:.25s;
+}
+
+.primary:hover {
+  transform:scale(1.05);
+  box-shadow:0 10px 25px rgba(79,70,229,.4);
 }
 
 .tasks {
@@ -54,10 +90,17 @@ input, textarea, select, button {
   gap:.8rem;
 }
 
+/* CARD */
 .task-card {
   padding:1rem;
-  border-radius:16px;
-  box-shadow:0 6px 14px rgba(0,0,0,.1);
+  border-radius:18px;
+  box-shadow:0 8px 16px rgba(0,0,0,.1);
+  animation: pop .25s ease;
+}
+
+@keyframes pop {
+  from { opacity:0; transform:scale(.95) }
+  to { opacity:1; transform:scale(1) }
 }
 
 .task-card h4 {
@@ -66,24 +109,11 @@ input, textarea, select, button {
 
 .task-card p {
   font-size:.9rem;
+  margin:.4rem 0;
   color:#555;
 }
 
-.task-actions {
-  display:flex;
-  gap:.4rem;
-  margin-top:.5rem;
-}
-
-.task-actions button {
-  flex:1;
-  border:none;
-  border-radius:10px;
-  padding:.4rem;
-  cursor:pointer;
-}
-
-/* STATUS */
+/* STATUS CARD */
 .task-card[data-status="pendente"] {
   border-left:6px solid #ef4444;
   background:#fff5f5;
@@ -100,6 +130,36 @@ input, textarea, select, button {
   opacity:.85;
 }
 
+/* SELECT STATUS */
+select {
+  font-weight:600;
+}
+
+select[value="pendente"] { background:#fee2e2; }
+select[value="andamento"] { background:#fef3c7; }
+select[value="concluida"] { background:#dcfce7; }
+
+/* AÇÕES */
+.task-actions {
+  display:flex;
+  justify-content:flex-end;
+  margin-top:.5rem;
+}
+
+.task-actions button {
+  background:none;
+  border:none;
+  cursor:pointer;
+  font-size:1.2rem;
+  color:#dc2626;
+  transition:.2s;
+}
+
+.task-actions button:hover {
+  transform:scale(1.2);
+}
+
+/* FILTROS */
 .filters {
   display:flex;
   gap:.4rem;
@@ -109,9 +169,10 @@ input, textarea, select, button {
 .filters button {
   flex:1;
   border:none;
-  border-radius:10px;
+  border-radius:12px;
   padding:.4rem;
   background:#e5e7eb;
+  cursor:pointer;
 }
 
 .filters button.active {

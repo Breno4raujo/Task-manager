@@ -4,13 +4,15 @@
   <meta charset="UTF-8" />
   <title>Task Manager</title>
   <link rel="stylesheet" href="style.css" />
+  <!-- Ícones -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
 <main>
   <nav>
     <button class="active" data-tab="tasks">Tarefas</button>
-    <button data-tab="add">Adicionar</button>
+    <button data-tab="add">Criar</button>
   </nav>
 
   <!-- TAREFAS -->
@@ -30,7 +32,7 @@
 
   <!-- ADICIONAR -->
   <section id="add" class="tab">
-    <input id="title" placeholder="Título" />
+    <input id="title" placeholder="Título da tarefa" />
     <textarea id="description" placeholder="Descrição"></textarea>
 
     <select id="status">
@@ -39,7 +41,7 @@
       <option value="concluida">Concluída</option>
     </select>
 
-    <button id="addTask">Adicionar tarefa</button>
+    <button id="addTask" class="primary">Criar tarefa</button>
   </section>
 </main>
 

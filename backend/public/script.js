@@ -1,6 +1,5 @@
 const taskList = document.getElementById("taskList");
 const addTaskBtn = document.getElementById("addTask");
-
 const titleInput = document.getElementById("title");
 const descInput = document.getElementById("description");
 const statusSelect = document.getElementById("status");
@@ -9,7 +8,6 @@ const searchInput = document.getElementById("search");
 let tasks = [];
 let currentFilter = "todas";
 
-/* ADICIONAR */
 addTaskBtn.onclick = () => {
   if (!titleInput.value) return;
 
@@ -26,14 +24,13 @@ addTaskBtn.onclick = () => {
   renderTasks();
 };
 
-/* RENDER */
 function renderTasks() {
   taskList.innerHTML = "";
 
   tasks
-    .filter(task =>
-      (currentFilter === "todas" || task.status === currentFilter) &&
-      task.title.toLowerCase().includes(searchInput.value.toLowerCase())
+    .filter(t =>
+      (currentFilter === "todas" || t.status === currentFilter) &&
+      t.title.toLowerCase().includes(searchInput.value.toLowerCase())
     )
     .forEach(task => {
       const card = document.createElement("div");
@@ -51,7 +48,9 @@ function renderTasks() {
         </select>
 
         <div class="task-actions">
-          <button onclick="deleteTask(${task.id})">Excluir</button>
+          <button onclick="deleteTask(${task.id})">
+            <i class="fa-solid fa-trash"></i>
+          </button>
         </div>
       `;
 
@@ -59,20 +58,17 @@ function renderTasks() {
     });
 }
 
-/* EXCLUIR */
 function deleteTask(id) {
-  tasks = tasks.filter(task => task.id !== id);
+  tasks = tasks.filter(t => t.id !== id);
   renderTasks();
 }
 
-/* ATUALIZAR STATUS */
 function updateStatus(id, status) {
   const task = tasks.find(t => t.id === id);
   task.status = status;
   renderTasks();
 }
 
-/* FILTROS */
 document.querySelectorAll(".filters button").forEach(btn => {
   btn.onclick = () => {
     document.querySelector(".filters .active").classList.remove("active");
@@ -82,10 +78,8 @@ document.querySelectorAll(".filters button").forEach(btn => {
   };
 });
 
-/* BUSCA */
 searchInput.oninput = renderTasks;
 
-/* TABS */
 document.querySelectorAll("nav button").forEach(btn => {
   btn.onclick = () => {
     document.querySelector("nav .active").classList.remove("active");
