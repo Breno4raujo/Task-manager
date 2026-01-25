@@ -1,44 +1,44 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
   <meta charset="UTF-8" />
-  <title>Minhas Tarefas</title>
+  <title>Task Manager</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
 
-  <main>
-    <header>
-      <h1>Minhas Tarefas</h1>
-    </header>
+<main>
+  <nav>
+    <button class="active" data-tab="tasks">Tarefas</button>
+    <button data-tab="add">Adicionar</button>
+  </nav>
 
-    <!-- FORMULÁRIO -->
-    <form id="task-form">
-      <input id="title" placeholder="Título da tarefa" required />
-      <textarea id="description" placeholder="Descrição da tarefa" required></textarea>
+  <!-- TAREFAS -->
+  <section id="tasks" class="tab active">
+    <div class="filters">
+      <button class="active" data-filter="todas">Todas</button>
+      <button data-filter="pendente">Pendentes</button>
+      <button data-filter="andamento">Em andamento</button>
+      <button data-filter="concluida">Concluídas</button>
+    </div>
 
-      <!-- SELECT CUSTOMIZADO -->
-      <label>Status</label>
-      <div class="custom-select" id="status-select">
-        <div class="select-selected pendente">Pendente</div>
+    <div class="tasks" id="taskList"></div>
+  </section>
 
-        <div class="select-options">
-          <div data-value="pendente" class="pendente">Pendente</div>
-          <div data-value="em andamento" class="andamento">Em andamento</div>
-          <div data-value="concluída" class="concluida">Concluída</div>
-        </div>
-      </div>
+  <!-- ADICIONAR -->
+  <section id="add" class="tab">
+    <input id="title" placeholder="Título da tarefa" />
+    
+    <select id="status">
+      <option value="pendente">Pendente</option>
+      <option value="andamento">Em andamento</option>
+      <option value="concluida">Concluída</option>
+    </select>
 
-      <button type="submit">Criar</button>
-    </form>
+    <button id="addTask">Adicionar</button>
+  </section>
+</main>
 
-    <!-- LISTA -->
-    <section id="task-list" class="tasks"></section>
-  </main>
-
-  <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
-
 </html>
