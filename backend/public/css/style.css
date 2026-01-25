@@ -180,16 +180,16 @@ article[data-status="pendente"] {
   background: #fff5f5;
 }
 
-article[data-status="andamento"] {
+article[data-status="em andamento"] {
   border-left: 6px solid #facc15;
   background: #fffbeb;
 }
 
-article[data-status="concluida"] {
+article[data-status="concluída"] {
   border-left: 6px solid #22c55e;
   background: #f0fdf4;
-  opacity: 0.75;
   text-decoration: line-through;
+  opacity: 0.8;
 }
 
 /* STATUS SELECT */
@@ -244,11 +244,11 @@ article[data-status="concluida"] {
   background: #fee2e2;
 }
 
-.status-select option[value="andamento"] {
+.status-select option[value="em andamento"] {
   background: #fef3c7;
 }
 
-.status-select option[value="concluida"] {
+.status-select option[value="concluída"] {
   background: #dcfce7;
 }
 

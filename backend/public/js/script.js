@@ -6,16 +6,22 @@ const skeleton = document.getElementById("skeleton");
 const feedback = document.getElementById("feedback");
 const statusSelect = document.getElementById("status");
 
+const STATUS_MAP = {
+  "pendente": "pendente",
+  "em andamento": "andamento",
+  "concluída": "concluida"
+};
+
 /* abas */
 document.querySelectorAll("nav button").forEach(button => {
   button.addEventListener("click", () => {
-    document.querySelectorAll(".tab").forEach(tab => {
-      tab.classList.remove("active");
-    });
+    document.querySelectorAll(".tab").forEach(tab =>
+      tab.classList.remove("active")
+    );
 
-    document.querySelectorAll("nav button").forEach(b => {
-      b.classList.remove("active");
-    });
+    document.querySelectorAll("nav button").forEach(b =>
+      b.classList.remove("active")
+    );
 
     document.getElementById(button.dataset.tab).classList.add("active");
     button.classList.add("active");
@@ -50,45 +56,42 @@ async function postTask(task) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(task)
   });
-
   if (!res.ok) throw new Error();
 }
 
 async function putTask(id, status) {
-  const concluida = status === "concluida";
+  const concluida = status === "concluída";
 
   const res = await fetch(`${API_URL}/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ status, concluida })
   });
-
   if (!res.ok) throw new Error();
 }
 
 async function removeTask(id) {
-  const res = await fetch(`${API_URL}/${id}`, {
-    method: "DELETE"
-  });
-
+  const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
   if (!res.ok) throw new Error();
 }
 
 /* render */
 function renderTask({ id, titulo, descricao, status }) {
+  const cssStatus = STATUS_MAP[status];
+
   const card = document.createElement("article");
-  card.className = `task-card ${status}`;
-  card.dataset.status = status;
+  card.className = `task-card ${cssStatus}`;
+  card.dataset.status = cssStatus;
 
   card.innerHTML = `
     <h3>${titulo}</h3>
     <p>${descricao}</p>
 
     <label class="status-label">Status</label>
-    <select class="status-select ${status}">
+    <select class="status-select ${cssStatus}">
       <option value="pendente">Pendente</option>
-      <option value="andamento">Em andamento</option>
-      <option value="concluida">Concluída</option>
+      <option value="em andamento">Em andamento</option>
+      <option value="concluída">Concluída</option>
     </select>
 
     <footer>
@@ -101,9 +104,11 @@ function renderTask({ id, titulo, descricao, status }) {
 
   select.addEventListener("change", async e => {
     const newStatus = e.target.value;
-    select.className = `status-select ${newStatus}`;
-    card.className = `task-card ${newStatus}`;
-    card.dataset.status = newStatus;
+    const newCssStatus = STATUS_MAP[newStatus];
+
+    select.className = `status-select ${newCssStatus}`;
+    card.className = `task-card ${newCssStatus}`;
+    card.dataset.status = newCssStatus;
 
     try {
       await putTask(id, newStatus);
@@ -113,17 +118,12 @@ function renderTask({ id, titulo, descricao, status }) {
   });
 
   card.querySelector("button").addEventListener("click", async () => {
-    card.style.opacity = "0";
-    card.style.transform = "scale(0.95)";
-
-    setTimeout(async () => {
-      try {
-        await removeTask(id);
-        loadTasks();
-      } catch {
-        showFeedback("Erro ao excluir tarefa", "error");
-      }
-    }, 200);
+    try {
+      await removeTask(id);
+      loadTasks();
+    } catch {
+      showFeedback("Erro ao excluir tarefa", "error");
+    }
   });
 
   taskList.appendChild(card);
@@ -137,21 +137,14 @@ async function loadTasks() {
   try {
     const tasks = await getTasks();
 
-    if (!Array.isArray(tasks) || tasks.length === 0) {
+    if (!tasks.length) {
       taskList.innerHTML = "<p>Nenhuma tarefa encontrada</p>";
       return;
     }
 
-    tasks.forEach(task => {
-      if (
-        typeof task.id === "number" &&
-        task.titulo &&
-        task.descricao &&
-        task.status
-      ) {
-        renderTask(task);
-      }
-    });
+    tasks.forEach(renderTask);
+    document.getElementById("task-counter").textContent =
+      `${tasks.length} tarefas`;
   } catch {
     showFeedback("Erro ao carregar tarefas", "error");
   } finally {
@@ -163,8 +156,8 @@ async function loadTasks() {
 form.addEventListener("submit", async e => {
   e.preventDefault();
 
-  const titulo = document.getElementById("title").value.trim();
-  const descricao = document.getElementById("description").value.trim();
+  const titulo = title.value.trim();
+  const descricao = description.value.trim();
   const status = statusSelect.value;
 
   if (!titulo || !descricao || !status) {
@@ -175,6 +168,7 @@ form.addEventListener("submit", async e => {
   try {
     await postTask({ titulo, descricao, status });
     form.reset();
+    statusSelect.value = "pendente";
     statusSelect.className = "status-select pendente";
     showFeedback("Tarefa criada com sucesso");
     loadTasks();
@@ -183,9 +177,10 @@ form.addEventListener("submit", async e => {
   }
 });
 
-/* cor do select */
+/* cor do select criar */
 statusSelect.addEventListener("change", () => {
-  statusSelect.className = "status-select " + statusSelect.value;
+  statusSelect.className =
+    "status-select " + STATUS_MAP[statusSelect.value];
 });
 
 /* init */
