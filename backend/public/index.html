@@ -2,46 +2,99 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>Task Manager</title>
+
+  <!-- CSS principal -->
   <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Font Awesome (ícones) -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  />
 </head>
+
 <body>
 
-<header aria-hidden="true"></header>
+  <header>
+    <h1 class="sr-only">Gerenciador de Tarefas</h1>
+  </header>
 
-<main>
-  <nav>
-    <button class="active" data-tab="tasks">Tarefas</button>
-    <button data-tab="add">Criar</button>
-  </nav>
+  <main>
 
-  <section id="tasks" class="tab active">
-    <input id="search" placeholder="Buscar tarefa..." maxlength="40" />
-    <small id="searchLimit" class="limit-msg"></small>
+    <nav aria-label="Navegação principal">
+      <button class="active" data-tab="tasks" type="button">Tarefas</button>
+      <button data-tab="add" type="button">Criar</button>
+    </nav>
 
-    <div class="filters">
-      <button class="active" data-filter="todas">Todas</button>
-      <button data-filter="pendente">Pendentes</button>
-      <button data-filter="andamento">Em andamento</button>
-      <button data-filter="concluida">Concluídas</button>
-    </div>
+    <!-- LISTAGEM DE TAREFAS -->
+    <section id="tasks" class="tab active" aria-labelledby="tasks-title">
+      <h2 id="tasks-title" class="sr-only">Lista de tarefas</h2>
 
-    <div class="tasks" id="taskList"></div>
-  </section>
+      <input
+        id="search"
+        type="search"
+        placeholder="Buscar tarefa..."
+        maxlength="40"
+        aria-label="Buscar tarefas"
+      />
+      <small id="searchLimit" class="limit-msg"></small>
 
-  <section id="add" class="tab">
-    <input id="title" placeholder="Título da tarefa (máx 350)" maxlength="350" />
-    <small id="titleLimit" class="limit-msg"></small>
+      <div class="filters" role="group" aria-label="Filtros de tarefas">
+        <button class="active" data-filter="todas" type="button">Todas</button>
+        <button data-filter="pendente" type="button">Pendentes</button>
+        <button data-filter="andamento" type="button">Em andamento</button>
+        <button data-filter="concluida" type="button">Concluídas</button>
+      </div>
 
-    <textarea id="description" placeholder="Descrição (máx 1500)" maxlength="1500"></textarea>
-    <small id="descLimit" class="limit-msg"></small>
+      <section
+        class="tasks"
+        id="taskList"
+        aria-live="polite"
+        aria-label="Lista de tarefas"
+      ></section>
+    </section>
 
-    <select id="status">
-      <option value="pendente">Pendente</option>
-      <option value="andamento">Em andamento</option>
-      <option value="concluida">Concluída</option>
-    </select>
+    <!-- CRIAÇÃO DE TAREFA -->
+    <section id="add" class="tab" aria-labelledby="add-title">
+      <h2 id="add-title" class="sr-only">Criar nova tarefa</h2>
 
-    <button id="addTask" class="primary">Criar tarefa</button>
-  </section>
+      <input
+        id="title"
+        type="text"
+        placeholder="Título da tarefa (máx 350)"
+        maxlength="350"
+        aria-label="Título da tarefa"
+      />
+      <small id="titleLimit" class="limit-msg"></small>
+
+      <textarea
+        id="description"
+        placeholder="Descrição (máx 1500)"
+        maxlength="1500"
+        aria-label="Descrição da tarefa"
+      ></textarea>
+      <small id="descLimit" class="limit-msg"></small>
+
+      <select id="status" aria-label="Status da tarefa">
+        <option value="pendente">Pendente</option>
+        <option value="andamento">Em andamento</option>
+        <option value="concluida">Concluída</option>
+      </select>
+
+      <button id="addTask" class="primary" type="button">
+        Criar tarefa
+      </button>
+    </section>
+
+  </main>
+
+  <footer>
+    <small>Task Manager ©</small>
+  </footer>
+
+  <script src="script.js" type="module"></script>
+</body>
+</html>

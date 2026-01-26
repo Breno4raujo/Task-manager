@@ -242,3 +242,8 @@ descInput.oninput = () => updateLimit(descInput, 1500, descLimitEl);
 
 /* INIT*/
 loadTasks();
+
+// Expor funções para uso em HTML (onclick, oninput, etc)
+window.editTask = editTask;
+window.updateStatus = updateStatus;
+window.deleteTask = deleteTask;
