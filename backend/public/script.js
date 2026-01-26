@@ -1,4 +1,4 @@
-const API_URL = "https://api-tarefas-4slt.onrender.com";
+const API_URL = "https://api-tarefas-4slt.onrender.com/tarefas";
 
 /* REFERÊNCIAS DO DOM */
 const taskList = document.getElementById("taskList");
@@ -164,11 +164,21 @@ async function editTask(id, field, value) {
 
 /* ATUALIZA STATUS (PATCH)*/
 async function updateStatus(id, status) {
-  await apiRequest(`${API_URL}/${id}/status`, {
-    method: "PATCH",
+  const task = tasks.find(t => t.id === id);
+  if (!task) return;
+
+  task.status = status;
+
+  await apiRequest(`${API_URL}/${id}`, {
+    method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ status })
+    body: JSON.stringify({
+      titulo: task.titulo,
+      descricao: task.descricao,
+      status: task.status
+    })
   });
+
   loadTasks();
 }
 
