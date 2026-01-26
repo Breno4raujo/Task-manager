@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { Tarefa } from "../models/tarefa.js";
+import { Tarefa } from "../models/index.js";
 
 const router = Router();
 
