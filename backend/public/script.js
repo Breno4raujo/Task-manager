@@ -60,7 +60,7 @@ addTaskBtn.onclick = async () => {
     })
   });
 
-  alert("Tarefa criada com sucesso ");
+  alert("Tarefa criada com sucesso");
   clearForm();
   loadTasks();
 };
@@ -86,7 +86,7 @@ function renderTasks() {
     .forEach(task => taskList.appendChild(createTaskCard(task)));
 }
 
-/* CARD (VISUAL PRESERVADO) */
+/* CARD */
 function createTaskCard(task) {
   const card = document.createElement("div");
   card.className = "task-card";
@@ -121,7 +121,6 @@ ${task.descricao || ""}</textarea>
       <option value="concluida" ${task.status === "concluida" ? "selected" : ""}>Concluída</option>
     </select>
 
-    <!-- AÇÕES EM PONTAS OPOSTAS -->
     <div class="task-actions" style="display:flex; justify-content:space-between; margin-top:8px;">
       <button onclick="enableEdit(${task.id})" title="Editar">
         <i class="fa-solid fa-pen" style="color:#6a0dad;"></i>
@@ -154,8 +153,10 @@ function enableEdit(id) {
   icon.parentElement.onclick = () => saveEdit(id);
 }
 
-/* SALVAR */
+/* SALVAR (COM CONFIRMAÇÃO) */
 async function saveEdit(id) {
+  if (!confirm("Deseja salvar as alterações?")) return;
+
   const card = document.querySelector(`.task-card[data-id="${id}"]`);
   if (!card) return;
 
@@ -195,7 +196,7 @@ async function deleteTask(id) {
   if (!confirm("Tem certeza que deseja excluir esta tarefa?")) return;
 
   await apiRequest(`${API_URL}/${id}`, { method: "DELETE" });
-  alert("Tarefa excluída com sucesso ");
+  alert("Tarefa excluída com sucesso");
   loadTasks();
 }
 
