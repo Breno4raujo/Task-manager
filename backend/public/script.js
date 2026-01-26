@@ -1,4 +1,6 @@
-/* REFERÊNCIAS DO DOM*/
+const API_URL = "https://api-tarefas-4slt.onrender.com";
+
+/* REFERÊNCIAS DO DOM */
 const taskList = document.getElementById("taskList");
 const addTaskBtn = document.getElementById("addTask");
 const titleInput = document.getElementById("title");
@@ -18,6 +20,18 @@ const DELETE_AFTER = 8;
 let tasks = [];
 let currentFilter = "todas";
 
+/* FUNÇÃO FETCH PADRÃO */
+async function apiRequest(url, options = {}) {
+  try {
+    const res = await fetch(url, options);
+    if (!res.ok) throw new Error("Erro na API");
+    return res.status !== 204 ? res.json() : null;
+  } catch (err) {
+    alert("Erro de conexão com a API");
+    throw err;
+  }
+}
+
 /* CONTADOR DE CARACTERES */
 function updateLimit(input, limit, counterEl) {
   if (!counterEl) return;
@@ -25,29 +39,34 @@ function updateLimit(input, limit, counterEl) {
   if (input.value.length > limit) {
     input.value = input.value.slice(0, limit);
   }
-
   counterEl.textContent = `${input.value.length}/${limit}`;
 }
 
-/* CRIAR NOVA TAREFA */
-addTaskBtn.onclick = () => {
+/* CARREGAR TAREFAS (GET) */
+async function loadTasks() {
+  tasks = await apiRequest(API_URL);
+  renderTasks();
+}
+
+/* CRIAR NOVA TAREFA (POST) */
+addTaskBtn.onclick = async () => {
   if (!titleInput.value.trim()) return;
 
-  const now = Date.now();
-
-  tasks.push({
-    id: now,
-    title: titleInput.value.trim(),
-    description: descInput.value.trim(),
-    status: statusSelect.value,
-    completedAt: statusSelect.value === "concluida" ? now : null
+  await apiRequest(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      titulo: titleInput.value.trim(),
+      descricao: descInput.value.trim(),
+      status: statusSelect.value
+    })
   });
 
   clearForm();
-  renderTasks();
+  loadTasks();
 };
 
-/* LIMPAR FORMULÁRIO */
+/* LIMPAR FORMULÁRIO*/
 function clearForm() {
   titleInput.value = "";
   descInput.value = "";
@@ -57,16 +76,15 @@ function clearForm() {
   updateLimit(descInput, 1500, descLimitEl);
 }
 
-/* RENDERIZA TODAS AS TAREFAS */
+/* RENDERIZAÇÃO PRINCIPAL */
 function renderTasks() {
   cleanupCompleted();
-
   taskList.innerHTML = "";
 
   tasks
     .filter(task =>
       (currentFilter === "todas" || task.status === currentFilter) &&
-      task.title.toLowerCase().includes(searchInput.value.toLowerCase())
+      task.titulo.toLowerCase().includes(searchInput.value.toLowerCase())
     )
     .forEach(task => {
       const card = createTaskCard(task);
@@ -81,10 +99,10 @@ function createTaskCard(task) {
   card.dataset.status = task.status;
 
   let warning = "";
-  if (task.status === "concluida" && task.completedAt) {
+  if (task.status === "concluida" && task.updatedAt) {
     const daysLeft =
       DELETE_AFTER -
-      Math.floor((Date.now() - task.completedAt) / DAY);
+      Math.floor((Date.now() - new Date(task.updatedAt).getTime()) / DAY);
 
     if (daysLeft > 0) {
       warning = `
@@ -100,26 +118,20 @@ function createTaskCard(task) {
     <input
       class="edit-title"
       maxlength="350"
-      value="${task.title}"
-      oninput="editTask(${task.id}, 'title', this.value)"
+      value="${task.titulo}"
+      oninput="editTask(${task.id}, 'titulo', this.value)"
     />
 
     <textarea
       class="edit-desc"
       maxlength="1500"
-      oninput="editTask(${task.id}, 'description', this.value)"
-    >${task.description}</textarea>
+      oninput="editTask(${task.id}, 'descricao', this.value)"
+    >${task.descricao || ""}</textarea>
 
     <select onchange="updateStatus(${task.id}, this.value)">
-      <option value="pendente" ${task.status === "pendente" ? "selected" : ""}>
-        Pendente
-      </option>
-      <option value="andamento" ${task.status === "andamento" ? "selected" : ""}>
-        Em andamento
-      </option>
-      <option value="concluida" ${task.status === "concluida" ? "selected" : ""}>
-        Concluída
-      </option>
+      <option value="pendente" ${task.status === "pendente" ? "selected" : ""}>Pendente</option>
+      <option value="andamento" ${task.status === "andamento" ? "selected" : ""}>Em andamento</option>
+      <option value="concluida" ${task.status === "concluida" ? "selected" : ""}>Concluída</option>
     </select>
 
     <div class="task-actions">
@@ -132,61 +144,66 @@ function createTaskCard(task) {
   return card;
 }
 
-/* EDIÇÃO DE TÍTULO / DESCRIÇÃO */
-function editTask(id, field, value) {
+/* EDIÇÃO INLINE (PUT) */
+async function editTask(id, field, value) {
   const task = tasks.find(t => t.id === id);
   if (!task) return;
 
   task[field] = value;
+
+  await apiRequest(`${API_URL}/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      titulo: task.titulo,
+      descricao: task.descricao,
+      status: task.status
+    })
+  });
 }
 
-/* ATUALIZA STATUS */
-function updateStatus(id, status) {
-  const task = tasks.find(t => t.id === id);
-  if (!task) return;
-
-  task.status = status;
-
-  if (status === "concluida") {
-    task.completedAt = Date.now();
-  } else {
-    task.completedAt = null;
-  }
-
-  renderTasks();
+/* ATUALIZA STATUS (PATCH)*/
+async function updateStatus(id, status) {
+  await apiRequest(`${API_URL}/${id}/status`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ status })
+  });
+  loadTasks();
 }
 
-/* EXCLUSÃO MANUAL */
-function deleteTask(id) {
-  tasks = tasks.filter(task => task.id !== id);
-  renderTasks();
+/* EXCLUSÃO MANUAL (DELETE) */
+async function deleteTask(id) {
+  await apiRequest(`${API_URL}/${id}`, { method: "DELETE" });
+  loadTasks();
 }
 
 /* LIMPEZA AUTOMÁTICA (8 DIAS) */
-function cleanupCompleted() {
+async function cleanupCompleted() {
   const now = Date.now();
 
-  tasks = tasks.filter(task =>
-    !(
+  for (const task of tasks) {
+    if (
       task.status === "concluida" &&
-      task.completedAt &&
-      now - task.completedAt > DELETE_AFTER * DAY
-    )
-  );
+      task.updatedAt &&
+      now - new Date(task.updatedAt).getTime() > DELETE_AFTER * DAY
+    ) {
+      await apiRequest(`${API_URL}/${task.id}`, { method: "DELETE" });
+    }
+  }
 }
 
-/* FILTROS POR STATUS */
+/* FILTROS */
 document.querySelectorAll(".filters button").forEach(button => {
   button.onclick = () => {
     document.querySelector(".filters .active")?.classList.remove("active");
     button.classList.add("active");
-
     currentFilter = button.dataset.filter;
     renderTasks();
   };
 });
 
-/* BUSCA (LIMITADA A 40) */
+/* BUSCA */
 searchInput.oninput = () => {
   updateLimit(searchInput, 40, searchLimitEl);
   renderTasks();
@@ -203,9 +220,9 @@ document.querySelectorAll("nav button").forEach(button => {
   };
 });
 
-/* LIMITES DE ENTRADA */
-titleInput.oninput = () =>
-  updateLimit(titleInput, 350, titleLimitEl);
+/* LIMITES */
+titleInput.oninput = () => updateLimit(titleInput, 350, titleLimitEl);
+descInput.oninput = () => updateLimit(descInput, 1500, descLimitEl);
 
-descInput.oninput = () =>
-  updateLimit(descInput, 1500, descLimitEl);
+/* INIT*/
+loadTasks();
