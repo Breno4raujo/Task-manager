@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
-import { sequelize } from "./index.js";
+import sequelize from "../config/database.js";
 
-export const Tarefa = sequelize.define("Tarefa", {
+const Tarefa = sequelize.define("Tarefa", {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -35,3 +35,5 @@ export const Tarefa = sequelize.define("Tarefa", {
     allowNull: true
   }
 });
+
+export default Tarefa;
