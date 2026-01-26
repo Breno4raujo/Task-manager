@@ -1,15 +1,37 @@
-import { DataTypes } from 'sequelize';
-import sequelize from '../config/database.js';
-export const STATUS_VALUES = ['pendente', 'em andamento', 'concluída'];
-const Tarefa = sequelize.define('Tarefa', {
+import { DataTypes } from "sequelize";
+import { sequelize } from "./index.js";
 
-  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+export const Tarefa = sequelize.define("Tarefa", {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
 
-  titulo: { type: DataTypes.STRING, allowNull: false },
+  titulo: {
+    type: DataTypes.STRING(350),
+    allowNull: false
+  },
 
-  descricao: { type: DataTypes.TEXT },
+  descricao: {
+    type: DataTypes.STRING(1500),
+    allowNull: false
+  },
 
-  status: { type: DataTypes.ENUM(...STATUS_VALUES), allowNull: false, defaultValue: 'pendente' }
-  
-}, { tableName: 'tarefas', timestamps: true });
-export default Tarefa;
+  status: {
+    type: DataTypes.ENUM("pendente", "andamento", "concluida"),
+    allowNull: false,
+    defaultValue: "pendente"
+  },
+
+  concluida: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  },
+
+  concluidaEm: {
+    type: DataTypes.DATE,
+    allowNull: true
+  }
+});

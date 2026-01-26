@@ -1,3 +1,4 @@
+/* REFERÊNCIAS DO DOM*/
 const taskList = document.getElementById("taskList");
 const addTaskBtn = document.getElementById("addTask");
 const titleInput = document.getElementById("title");
