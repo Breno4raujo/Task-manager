@@ -37,8 +37,13 @@ app.use('/tarefas', tarefasRouter);
 
 // Frontend SPA  //
 app.get("*", (req, res) => {
+  if (req.originalUrl.startsWith("/tarefas")) {
+    return res.status(404).json({ error: "Rota não encontrada" });
+  }
+
   res.sendFile(path.join(__dirname, "..", "public", "index.html"));
 });
+
 
 // 404 //
 app.use(notFound);

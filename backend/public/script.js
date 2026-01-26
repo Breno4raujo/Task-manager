@@ -22,15 +22,21 @@ let currentFilter = "todas";
 
 /* FUNÇÃO FETCH PADRÃO */
 async function apiRequest(url, options = {}) {
-  try {
-    const res = await fetch(url, options);
-    if (!res.ok) throw new Error("Erro na API");
-    return res.status !== 204 ? res.json() : null;
-  } catch (err) {
-    alert("Erro de conexão com a API");
-    throw err;
+  const res = await fetch(url, options);
+
+  const contentType = res.headers.get("content-type");
+
+  if (!res.ok) {
+    throw new Error("Erro na API");
   }
+
+  if (!contentType || !contentType.includes("application/json")) {
+    throw new Error("Resposta inválida da API");
+  }
+
+  return res.status !== 204 ? res.json() : null;
 }
+
 
 /* CONTADOR DE CARACTERES */
 function updateLimit(input, limit, counterEl) {
