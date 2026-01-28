@@ -1,65 +1,51 @@
-📝 Task Manager (API + Frontend)
+# 📝 Task Manager (API + Frontend)
 
-Aplicação full stack para gerenciamento de tarefas (To-Do List), composta por uma API REST robusta e uma interface web moderna e responsiva, desenvolvida para consolidar conceitos de frontend e backend, consumo de APIs e boas práticas de arquitetura.
+Aplicação **full stack** para gerenciamento de tarefas (**To-Do List**), composta por uma **API REST robusta** e uma **interface web moderna e responsiva**, desenvolvida para consolidar conceitos de **frontend e backend**, consumo de APIs e boas práticas de arquitetura.
 
-Projeto desenvolvido durante o programa Programadores do Amanhã, integrando os aprendizados dos módulos M2 (Backend) e M3 (Frontend).
+Projeto desenvolvido durante o programa **Programadores do Amanhã**, integrando os aprendizados dos módulos **M2 (Backend)** e **M3 (Frontend)**.
 
-🌐 Visão Geral do Projeto
+---
 
-🔙 Backend: API REST em Node.js seguindo padrão MVC
+## 🌐 Visão Geral do Projeto
 
-🎨 Frontend: Interface web responsiva consumindo a API em tempo real
+- 🔙 **Backend**: API REST em Node.js seguindo padrão MVC  
+- 🎨 **Frontend**: Interface web responsiva consumindo a API em tempo real  
+- 🔗 **Integração completa** entre frontend e backend  
+- 🚀 **Deploy em produção**
 
-🔗 Integração completa entre frontend e backend
+---
 
-🚀 Deploy em produção
+## 🚀 Tecnologias Utilizadas
 
-🚀 Tecnologias Utilizadas
-Backend
+### 🔧 Backend
+- **Node.js**
+- **Express**
+- **Sequelize ORM**
+- **SQLite**
+- **Dotenv**
+- **Nodemon**
+- **Sequelize CLI**
+- **Arquitetura MVC**
+- **Swagger (documentação)**
 
-Node.js
+### 🎨 Frontend
+- **HTML5 Semântico**
+- **CSS3**
+  - Flexbox
+  - CSS Grid
+  - Media Queries
+  - Animações e gradientes
+- **JavaScript ES6+**
+  - Fetch API
+  - Manipulação do DOM
+- **Design Mobile-First**
+- **Notificações visuais (Toasts)**
 
-Express
+---
 
-Sequelize ORM
+## 📂 Estrutura do Projeto
 
-SQLite
-
-Dotenv
-
-Nodemon
-
-Sequelize CLI
-
-Arquitetura MVC
-
-Swagger (documentação)
-
-Frontend
-
-HTML5 Semântico
-
-CSS3
-
-Flexbox
-
-CSS Grid
-
-Media Queries
-
-Animações e gradientes
-
-JavaScript ES6+
-
-Fetch API
-
-Manipulação do DOM
-
-Design Mobile-First
-
-Notificações visuais (toasts)
-
-📂 Estrutura do Projeto
+```bash
 src/
 ├─ config/        # Configuração do banco de dados (Sequelize)
 ├─ controllers/   # Lógica de negócio (CRUD de tarefas)
@@ -74,6 +60,7 @@ public/
 ├─ index.html     # Interface principal
 ├─ style.css      # Estilos (Mobile-First)
 └─ script.js      # Lógica frontend e consumo da API
+
 
 ⚙️ Configuração do Ambiente (Backend)
 1️⃣ Clone o repositório
